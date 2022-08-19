@@ -2,7 +2,6 @@ import requests
 import json
 import conf
 
-
 # GET https://IP_Sambox/api/aaaLogin.json
 def obtener_token(usuario, clave):
     url = conf.sandbox + "/api/aaaLogin.json"
@@ -25,7 +24,6 @@ def obtener_token(usuario, clave):
         exit(1)
     token = respuesta.json()['imdata'][0]['aaaLogin']['attributes']['token']
     return token
-
 
 # GET https://IP_Sambox/apic-ip-address/api/class/topSystem.json
 def top_system():
