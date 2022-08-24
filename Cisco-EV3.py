@@ -1,5 +1,7 @@
-import requests
 import json
+import time
+import os
+import requests
 import conf
 
 # GET https://IP_Sambox/api/aaaLogin.json
@@ -27,6 +29,16 @@ def obtener_token(usuario, clave):
 
 # GET https://IP_Sambox/apic-ip-address/api/class/topSystem.json
 def top_system():
+
+    # Limpiar pantalla para monitoreo limpio
+    def limpiar_print():
+        if os.name == "nt":
+            os.system("cls")
+        else:
+            os.system("clear")
+
+    limpiar_print()
+
     cabecera = {
         "Content-Type": "application/json"
     }
@@ -36,6 +48,8 @@ def top_system():
     requests.packages.urllib3.disable_warnings()
     respuesta = requests.get(conf.sandbox + "/api/class/topSystem.json", headers=cabecera, cookies=clavetoken, verify=False)
     total_nodos = int(respuesta.json()["totalCount"])
+
+    print("Cantidad de dispositivos conectados: " + respuesta.json()["totalCount"])
 
     for i in range(0, total_nodos):
         ip_local = respuesta.json()["imdata"][i]["topSystem"]["attributes"]["address"]
@@ -49,5 +63,15 @@ def top_system():
               "|    MAC Address: " + mac + "\t" + "\t" +
               "|    Estado: " + estado + "\t" + "\t" +
               "|    Tiempo de actividad: " + uptime)
+
+#Generar un bucle de consulta cada 60 segundos
+while True:
+    try:
+        top_system()
+        time.sleep(60)
+    except KeyboardInterrupt:
+        print("  >>Ha finalizado el programa<<  ")
+        exit(1)
+
 
 top_system()
